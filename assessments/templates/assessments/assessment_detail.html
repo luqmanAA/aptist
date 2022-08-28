@@ -1,15 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ assessment.name }}</h1>
-    <h5>Created By: {{ assessment.created_by }}</h5>
-    <h3>Date Created: {{ assessment.date_created }}</h3>
-    <h3>Last Modified: {{ assessment.last_modified }}</h3>
-    <h5>Pass Mark: {{ assessment.pass_mark }}%</h5>
-    <h5>Duration: {{ assessment.duration }} mins</h5>
-    <a href="{% url 'assessments:edit' assessment.id %}"><button type="button">Edit Assessment</button></a>
-
-    <a href="{% url 'assessments:questions:create' assessment.id  %}"><button type="button">Add Question</button></a>
+    <div class="card">
+        <div class="card-header">
+            <h3>{{ assessment.name }}</h3>
+        </div>
+        <div class="card-body">
+            <h6 class="card-title">Created By: {{ assessment.created_by }}</h6>
+            <h6 class="card-title">Date Created: {{ assessment.date_created }}</h6>
+            <h6 class="card-title">Last Modified: {{ assessment.last_modified }}</h6>
+            <h6 class="card-title">Pass Mark: {{ assessment.pass_mark }}%</h6>
+            <h6 class="card-title">Duration: {{ duration_in_time }} mins</h6>
+            <a href="{% url 'assessments:edit' assessment.id %}">
+                <button class="btn btn-primary">Edit Assessment</button>
+            </a>
+            <a href="{% url 'assessments:questions:create' assessment.id  %}">
+                <button class="btn btn-primary">Add Question</button>
+            </a>
+        </div>
+    </div>
     <hr>
     <h2>Questions</h2>
     {% for question in assessment.questions.all %}

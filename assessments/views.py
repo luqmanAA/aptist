@@ -1,3 +1,5 @@
+from pytimeparse.timeparse import timeparse
+
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -53,6 +55,13 @@ class AssessmentListView(LoginRequiredMixin, ListView):
 
 class AssessmentDetailView(LoginRequiredMixin, DetailView):
     model = Assessment
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        assessment = self.get_object()
+        context['duration_in_time'] = assessment.duration.total_seconds()/60
+        return context
+        
 
 
 class ToggleAssessmentVisibilityView(LoginRequiredMixin, View):

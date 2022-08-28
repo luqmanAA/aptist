@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ question.assessments.name }}</h1>
+    <h6>{{ question.question_title }}</h6>
+    <p>{{ question.description }}</p>
+    {% for choice in question.choices.all %}
+    <p>{{ choice.choice_text }}</p>
+    {% endfor %}
+    <a href="{% url 'assessments:questions:edit' question.assessments_id question.id %}"><button type="button">Edit Question</button></a>
+{%  endblock %}

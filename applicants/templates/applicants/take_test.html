@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h5>Time Left: <span id="time_left">{{ assessment.duration }}</span></h5>
+    <h3>{{ assessment.name }}</h3>
+    <form class="form-horizontal" method="post" onsubmit="sendFormData(event)">
+        {% csrf_token %}
+        {% for question in assessment.questions.all %}
+            <div class="row spacer">
+                <div class="col-8">
+                    <div class="card space_top">
+                        <div class="card-header">
+                            <h5 class="question" id="{{ question.id }}">{{ question.question_title }}</h5>
+                            {% if question.description %}
+                                <p>{{ question.description }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% for choice in question.choices.all %}
+                <div class="row spacer">
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <input class="choice-for-{{ question.id }}" type="radio" name="{{forloop.parentloop.counter}}-chosen-answer" value="{{ choice.choice_text }}">
+                                {{ choice.choice_text }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        {% endfor %}
+        <div class="row spacer space_top">
+            <div class="col-2">
+                <button type="submit" class="btn btn-block btn-primary" id="">Submit</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block script %}
+    <script>
+
+        let assessmentCountdown = function () {
+            let deadline = new Date("{{ time_to_complete.isoformat }}");
+            let countDown = setInterval(function () {
+                let now = new Date().getTime()
+                let difference = deadline - now
+                let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
+                let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+                let doubleDigitHour = hours.toLocaleString(undefined,{minimumIntegerDigits: 2})
+                let doubleDigitMinute = minutes.toLocaleString(undefined,{minimumIntegerDigits: 2})
+                let doubleDigitSecond = seconds.toLocaleString(undefined,{minimumIntegerDigits: 2})
+                let time_left_text = document.getElementById('time_left')
+
+                time_left_text.innerHTML = `${doubleDigitHour}:${doubleDigitMinute}:${doubleDigitSecond}`
+
+                if (difference < 1) {
+                    clearInterval(countDown)
+                    time_left_text.innerHTML = '0:00:00'
+                    {#sendFormData(event)#}
+                }
+            })
+        }
+        assessmentCountdown()
+
+        let sendFormData = function (event){
+            if(event){
+                event.preventDefault();
+            }
+            const time_completed = document.getElementById('time_left').innerHTML
+            console.log(time_left)
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+            let questions_text = document.querySelectorAll('.question')
+            let formdata = new FormData()
+            for(let i=0; i<questions_text.length; i++){
+                const questionId = questions_text[i].id
+                const choiceId = '.choice-for-'+questionId
+                let specific_choices = document.querySelectorAll(choiceId)
+                for(let i=0; i<specific_choices.length; i++){
+
+                    if(specific_choices[i].checked){
+
+                        formdata.append(questionId, specific_choices[i].value)
+                        break
+                    }
+                }
+                if(!(formdata.get(questionId))){
+                    formdata.append(questionId, null)
+                }
+            }
+            const url = window.location.pathname
+
+            formdata.append('time_completed', time_completed)
+            let options = {
+                method: 'POST',
+                body: formdata,
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            }
+            fetch(url, options)
+                .then(async response => {
+                    const url = await response.json()
+                    window.location.pathname = url.redirect_url
+                })
+        }
+    </script>
+{% endblock %}

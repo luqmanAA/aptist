@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div>
+        <h1>Add new question</h1>
+        <form class="form-horizontal" method="post">
+            {% csrf_token %}
+            <div class="row spacer">
+                <div class="col-2">
+                    <label>{{ question_form.question_title.label }}</label>
+                </div>
+                <div class="col-4">
+                    <div class="input-group">
+                        {{ question_form.question_title }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row spacer">
+                <div class="col-2">
+                    <label>{{ question_form.description.label }}</label>
+                </div>
+                <div class="col-4">
+                    <div class="input-group">
+                        {{ question_form.description }}
+                    </div>
+                </div>
+            </div>
+
+            {{ choice_formset.management_form }}
+            {% for form in choice_formset %}
+                <div class="row form-row spacer space_top">
+                    <div class="col-2">
+                        <label>{{ form.choice_text.label }}</label>
+                    </div>
+                    <div class="col-4">
+                        <div class="input-group" id="choice-{{ forloop.counter }}" data-choice-id="choice-id-{{ forloop.counter }}">
+                            {{ form.choice_text }}
+                            <div class="input-group-append">
+                                <button class="btn btn-success add-form-row">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2 form-check">
+{#                        <input class="form-check-input" type="radio" name="is_correct" value="True" id="choice-radio-{{ forloop.counter }}">#}
+{#                        <label class="form-check-label" for="choice-radio-{{ forloop.counter }}">#}
+{#                            Mark correct#}
+{#                      </label>#}
+                        {{ form.is_correct }}
+                        <label>{{ form.is_correct.label }}</label>
+                    </div>
+                </div>
+            {% endfor %}
+        <div class="row spacer space_top">
+            <div class="col-4 offset-2">
+                <button type="submit" class="btn btn-block btn-primary" id="create_btn">Create</button>
+            </div>
+        </div>
+        </form>
+
+    </div>
+{% endblock %}

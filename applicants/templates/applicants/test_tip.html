@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="card col-6">
+
+        <div class="card-body">
+            <h5 class="card-title">Hello {{ applicant_name }},</h5>
+            <p class="card-text">
+                Thank you for applying to <strong>{{ organization_name }}</strong> and welcome to our assessment
+            </p>
+            <p class="card-title">
+                The assessment would take approximately <strong>{{ duration }}</strong> minutes
+            </p>
+            <p class="card-title">
+                Completing it will give you a chance to show off your skills and stand out from the crowd!
+            </p>
+            <p class="card-title">Goodluck!</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="row spacer space_top">
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-block btn-primary" id="">Start</button>
+{#                        <a href="{% url 'applicants:start-test' id %}" class="btn btn-primary">Start</a>#}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

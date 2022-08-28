@@ -1,0 +1,17 @@
+.container{
+    padding: 5em 0;
+}
+
+.sidebar-nav {
+    margin-top: 20px;
+    padding: 0;
+    list-style: none;
+}
+.btn-block {
+    display: block;
+    width: 100% !important;
+}
+
+.space_top {
+    margin-top: 20px;
+}

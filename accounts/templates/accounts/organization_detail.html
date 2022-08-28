@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ organization.company_name }}</h1>
+    <h3>Owned by: {{ organization.first_name }} {{ organization.last_name }}</h3>
+    <h5>Phone: {{ organization.phone_number }}</h5>
+    <h5>Email: {{ organization.email }}</h5>
+    <h5>Company size: {{ organization.company_size | title}}</h5>
+{%  endblock %}

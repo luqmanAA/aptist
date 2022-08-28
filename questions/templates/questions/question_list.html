@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        {% for question in question_list %}
+            <p>
+                <a href="{% url 'assessments:questions:detail' question.assessments_id question.id %}">
+                    {{ question }} -
+                </a>
+            </p>
+
+        {% endfor %}
+        <hr>
+        <a href="{% url 'assessments:questions:create' assessment_id %}"><button>
+            Create Question
+        </button></a>
+    </div>
+
+{% endblock %}

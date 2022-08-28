@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        {% for assessment in assessment_list %}
+            <p>
+                <a href="{% url 'assessments:detail' assessment.id %}">
+                    {{ assessment }} -
+                </a>
+                {% if assessment.is_published %}
+                    <span>Active</span>
+                    {% else %}
+                    <span>Inactive</span>
+                {% endif %}
+            </p>
+            {% if assessment.is_published %}
+                <a href="{% url 'assessments:toggle-publish' assessment.id %}">Unpublish</a>
+            {% else %}
+                <a href="{% url 'assessments:toggle-publish' assessment.id %}">Publish</a>
+            {% endif %}
+        {% endfor %}
+        <hr>
+        <a href="{% url 'assessments:create' %}"><button>
+            Create Assessment
+        </button></a>
+    </div>
+{% endblock %}

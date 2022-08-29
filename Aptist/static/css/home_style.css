@@ -1,0 +1,247 @@
+
+/*
+** General Styles for HTML tags
+*/
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 30px;
+  overflow-x: hidden;
+  background-color: #ffffff;
+  color: #666666;
+}
+
+html, body, .wrapper {
+  height: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #232323;
+  font-weight: normal;
+  line-height: 1.2;
+  font-family: 'Nunito', sans-serif;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  margin-bottom: 15px;
+}
+
+img {
+  border: none;
+  outline: none;
+  max-width: 100%;
+}
+
+label {
+  display: inline-block;
+  font-weight: normal;
+  margin-bottom: 5px;
+  max-width: 100%;
+}
+
+a, .btn, button {
+  transition: all 0.35s ease-in-out;
+  -webkit-transition: all 0.35s ease-in-out;
+  -moz-transition: all 0.35s ease-in-out;
+  -ms-transition: all 0.35s ease-in-out;
+  -o-transition: all 0.35s ease-in-out;
+  outline: medium none;
+}
+
+a img, iframe {
+  border: none;
+}
+
+p {
+  color: #666666;
+  margin: 0 0 15px;
+  text-transform: none;
+  font-weight: 400;
+}
+
+
+
+/* Default CSS */
+.container-medium {
+  padding: 0 15px;
+  margin: auto;
+  max-width: 1400px;
+}
+
+.container-full {
+  padding: 0 15px;
+  margin: auto;
+  max-width: 1400px;
+}
+
+@media (min-width:576px) {
+  .container-medium {
+    max-width: 540px;
+  }
+}
+
+@media (min-width:768px) {
+  .container-medium {
+    max-width: 720px;
+  }
+}
+
+@media (min-width:992px) {
+  .container-medium {
+    max-width: 960px;
+  }
+}
+
+@media (min-width:1200px) {
+  .container-medium {
+    max-width: 1400px;
+    width: 80%;
+  }
+}
+
+@media (min-width:576px) {
+  .container-full {
+    max-width: 540px;
+  }
+}
+
+@media (min-width:768px) {
+  .container-full {
+    max-width: 720px;
+  }
+}
+
+@media (min-width:992px) {
+  .container-full {
+    max-width: 960px;
+  }
+}
+
+@media (min-width:1200px) {
+  .container-full {
+    max-width: 1400px;
+    width: 90%;
+  }
+}
+
+.padding-xl {
+  padding-top: 180px;
+  padding-bottom: 180px;
+}
+
+.top-border {
+  border-top: 1px solid #e7e7e7;
+}
+
+.align-center {
+  align-items: center;
+}
+
+
+/* Gradient Button */
+
+.btn-gradient,
+.btn-gradient:focus {
+  position: relative;
+  z-index: 1;
+  color: #ffffff !important;
+}
+
+.btn-gradient:hover {
+  color: #ffffff;
+}
+
+.btn-gradient::after {
+  position: absolute;
+  left: 0;
+  top: 0;
+  content: "";
+  height: 100%;
+  width: 100%;
+  background: #004aad;
+  transition: all 0.35s ease-in-out;
+  z-index: -1;
+}
+
+.btn i {
+  font-size: 12px;
+}
+
+.btn-gradient i {
+  display: inline-block;
+  line-height: 28px;
+  color: #ffffff;
+  font-size: 14px;
+  margin-left: 5px;
+}
+
+
+/* ============================================================== 
+     # Banner 
+=================================================================== */
+body, 
+.banner-area, 
+.banner-area div {
+  height: 100%;
+}
+
+.banner-area.auto-height, 
+.banner-area.auto-height div {
+  height: auto;
+}
+
+
+/* Carousel Indicators */
+
+.double-items > .row div {
+  height: auto;
+}
+
+
+
+/* Content */
+
+.banner-area.text-default h2 {
+  font-size: 46px;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+.banner-area.text-default h2 strong {
+  display: block;
+}
+
+.banner-area p {
+  font-size: 18px;
+  line-height: 34px;
+}
+
+
+.banner-area .info.shape::after {
+  position: absolute;
+  left: -50px;
+  top: -50px;
+  content: "";
+  height: 150px;
+  width: 150px;
+}
+
+.get_started {
+    padding: 15px 30px;
+}

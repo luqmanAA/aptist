@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div>
+    {% comment %} <div>
         {% for assessment in assessment_list %}
             <p>
                 <a href="{% url 'assessments:detail' assessment.id %}">
@@ -23,5 +23,75 @@
         <a href="{% url 'assessments:create' %}"><button>
             Create Assessment
         </button></a>
-    </div>
+    </div> {% endcomment %}
+
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">All Assessments</h3>
+                <div class="nk-block-des text-soft">
+                    <p>You have total {{assessment_list.count}} assessments</p>
+                </div>
+            </div><!-- .nk-block-head-content -->
+        </div><!-- .nk-block-between -->
+    </div><!-- .nk-block-head -->
+    <div class="nk-block">
+        <div class="row g-gs">
+            {% for assessment in assessment_list %}
+                <div class="col-sm-6 col-lg-4 col-xxl-3">
+                    <div class="card h-100">
+                        <div class="card-inner">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <a href="html/lms/courses.html" class="d-flex align-items-center">
+                                    <div class="user-avatar sq bg-purple"><span>GD</span></div>
+                                    <div class="ms-3">
+                                        <h6 class="title mb-1">{{assessment.name}}</h6>
+                                        <span class="sub-text">{{assessment.questions.count}} Questions</span>
+                                    </div>
+                                </a>
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle btn btn-sm btn-icon btn-trigger mt-n1 me-n1" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <ul class="link-list-opt no-bdr">
+                                            <li><a data-bs-toggle="modal" href="#modalEdit"><em class="icon ni ni-edit"></em><span>Edit Category</span></a></li>
+                                            <li><a data-bs-toggle="modal" href="#modalDelete"><em class="icon ni ni-delete"></em><span>Delete Category</span></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <p>{% if assessment.description %}
+                                {{assessment.description}}
+                                {% else %}
+                                No description
+                                {%endif%}
+                            </p>
+                            <ul class="d-flex flex-wrap g-1 mb-3">
+                                <li><span class="badge badge-dim bg-primary">Duration: {{assessment.duration}}</span></li>
+                                {%if assessment.is_published%}
+                                <li><span class="badge badge-dim bg-info">Published</span></li>
+                                {% else %}
+                                <li><span class="badge badge-dim bg-danger">Draft</span></li>
+                                {% endif %}
+                                <li><span class="badge badge-dim bg-info">Pass mark: {{assessment.pass_mark }}%</span></li>
+                            </ul>
+                            <div class="row">
+                                <div class='col-6'>
+                                    {%if assessment.is_published%}
+                                    <a href="{% url 'assessments:toggle-publish' assessment.id %}" class="btn btn-primary bg-warning">Unpublish</a>
+                                    {% else %}
+                                    <a href="{% url 'assessments:toggle-publish' assessment.id %}" class="btn btn-primary bg-info">Publish</a>
+                                    {% endif %}
+                                </div>
+                                <div class='col-6'>
+                                    {%if not assessment.is_deleted%}
+                                    <a href="{% url 'assessments:toggle-delete' assessment.id %}" class="btn btn-primary bg-danger">Delete</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div><!-- .nk-block -->
 {% endblock %}

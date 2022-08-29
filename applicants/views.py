@@ -12,8 +12,9 @@ from django.views import View
 from django.views.generic.edit import CreateView, FormView
 
 from accounts.models import User
-from assessments.models import Assessment, AssessmentTaken
-from questions.models import Choice, QuestionAnswered, SelectedChoice
+from assessments.models import Assessment
+from questions.models import Choice
+from results.models import Result
 
 from .models import Applicant
 
@@ -85,31 +86,32 @@ class StartAssessmentView(View):
 
     def get(self, request, pk, **kwargs):
         try:
-            assessment = Assessment.objects.get(id=pk)
+            assessment = Assessment.active_objects.get(id=pk)
             applicant = Applicant.objects.get(account_id=request.user.id)
             self.db_objects.update({
                 'assessment': assessment,
                 'applicant': applicant,
             })
-            if not AssessmentTaken.objects.filter(
+            
+            if not Result.objects.filter(
                     assessment=assessment,
                     applicant=applicant
                     ).exists():
-                assessment_taken = AssessmentTaken.objects.create(
+                result = Result.objects.create(
                     assessment=assessment,
                     applicant=applicant,
-                    duration_left=assessment.duration)
+                    )
             else:
-                assessment_taken = AssessmentTaken.objects.filter(
+                result = Result.objects.filter(
                     assessment=assessment
                     ).first()
             self.db_objects.update({
-                'assessment_taken': assessment_taken
+                'result': result
             })
-            time_to_complete = assessment_taken.started_at + assessment.duration
+            time_to_complete = result.time_started + assessment.duration
             time_now = datetime.now()
-            if time_now > time_to_complete:
-                return HttpResponseRedirect('/')
+            # if time_now > time_to_complete:
+            #     return HttpResponseRedirect('/')
 
             context = {
                 'time_to_complete': time_to_complete,
@@ -136,48 +138,48 @@ class StartAssessmentView(View):
             return HttpResponseRedirect('/')
 
     def post(self, request, pk):
-        assessment_taken = self.db_objects.get('assessment_taken', '')
-        request_data = (request.POST).dict()
-        time_completed_in_string = request_data.pop('time_completed','')
-        time_completed_in_seconds = timeparse(time_completed_in_string)
+        assessment = self.db_objects.get('assessment')
+        # applicant = self.db_objects.get('applicant')
+        result = self.db_objects.get('result')
+        correct_choice_list = []
+        print(assessment)
+        question_records = assessment.questions.all()
+        
+        for question in question_records:
+            correct_choice = question.choices.filter(is_correct=True).first()
+            if correct_choice:
+                correct_choice_list.append(correct_choice.choice_text)
+        assessment_data = (request.POST).dict()
+        time_completed_in_seconds = timeparse(
+            assessment_data.pop('time_completed', '')
+            )
         if time_completed_in_seconds:
             time_completed_in_delta = timedelta(
                 seconds=time_completed_in_seconds
             )
-            assessment_taken.duration_left = time_completed_in_delta
-        assessment_result = request_data
+            result.time_taken = assessment.duration - time_completed_in_delta
+            
+        selected_answer_list = list(assessment_data.values())
+        all_questions = list(assessment_data.keys())
+        attempted_questions = list({
+            question for question in assessment_data
+            if assessment_data[question] != 'null'
+            })
+        correct_answers = [i for i in selected_answer_list if i in correct_choice_list]
 
-        for question in assessment_result:
-            if assessment_result[question] == 'null':
-                selected_choice_text = 'not answered'
-            else:
-                selected_choice_text = assessment_result[question]
-            if QuestionAnswered.objects.filter(question_id=question).exists():
-                question_answered = QuestionAnswered.objects.filter(question_id=question).first()
-            else:
-                question_answered = QuestionAnswered.objects.create(
-                    question_id=question
-                )
-            if Choice.objects.filter(
-                    choice_text__iexact=selected_choice_text,
-                    question_id=question
-                    ).exists():
-                choice = Choice.objects.filter(
-                    choice_text__iexact=selected_choice_text,
-                    question_id=question).first()
-                selected_choice = SelectedChoice(
-                    question_answered=question_answered,
-                    choice=choice
-                )
-            else:
-                selected_choice = SelectedChoice(
-                    question_answered=question_answered,
-                    none_choice=selected_choice_text
-                )
-            selected_choice.save()
-            assessment_taken.question_answered.add(question_answered)
-            assessment_taken.selected_choice.add(selected_choice)
-            assessment_taken.save()
+        score = (len(correct_answers) / len(correct_choice_list))
+        print(len(all_questions))
+        print(len(attempted_questions))
+        print(len(correct_choice_list))
+        print(len(correct_answers))
+        print(result)
+        
+        result.number_of_attempted_questions = len(attempted_questions)
+        result.number_of_correct_answers = len(correct_answers)
+        result.number_of_incorrect_answers = len(
+            correct_choice_list) - len(correct_answers)
+        result.percentage_score = score * 100
+        # result.save()
 
         redirect_url = reverse('applicants:assessment-completed', args=[pk])
         return JsonResponse(

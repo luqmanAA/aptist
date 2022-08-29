@@ -8,17 +8,26 @@ from assessments.models import Assessment
 
 
 class Result(models.Model):
-    assessments = models.ForeignKey(
+    assessment = models.ForeignKey(
         Assessment,
         on_delete=models.CASCADE,
         related_name='results',
     )
-    applicants = models.ForeignKey(
+    applicant = models.ForeignKey(
         Applicant,
         on_delete=models.CASCADE,
         related_name='results',
     )
-    score = models.FloatField()
+    number_of_attempted_questions = models.IntegerField(null=True, blank=True)
+    number_of_correct_answers = models.IntegerField(null=True, blank=True)
+    number_of_incorrect_answers = models.IntegerField(null=True, blank=True)
+    score = models.FloatField(null=True, blank=True)
+    percentage_score = models.FloatField(null=True, blank=True)
+    time_started = models.DateTimeField(auto_now_add=True, null=True)
+    time_taken = models.DurationField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.score}, applicant: {self.applicants}, assessment: {self.assessments.name}"
+        return f"{self.score}"
+    
+    def get_number_of_applicants(self):
+        return self.applicant.all()

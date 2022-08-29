@@ -5,23 +5,66 @@
         <div class="card-header">
             <h3>{{ assessment.name }}</h3>
         </div>
-        <div class="card-body">
-            <h6 class="card-title">Created By: {{ assessment.created_by }}</h6>
-            <h6 class="card-title">Date Created: {{ assessment.date_created }}</h6>
-            <h6 class="card-title">Last Modified: {{ assessment.last_modified }}</h6>
-            <h6 class="card-title">Pass Mark: {{ assessment.pass_mark }}%</h6>
-            <h6 class="card-title">Duration: {{ duration_in_time }} mins</h6>
-            <a href="{% url 'assessments:edit' assessment.id %}">
-                <button class="btn btn-primary">Edit Assessment</button>
-            </a>
-            <a href="{% url 'assessments:questions:create' assessment.id  %}">
-                <button class="btn btn-primary">Add Question</button>
-            </a>
+        <div class="card-body row justify-content-around">
+            <div class="col-md-4">
+                <h6 class="card-title">Created By: {{ assessment.created_by }}</h6>
+                <h6 class="card-title">Date Created: {{ assessment.date_created }}</h6>
+                <h6 class="card-title">Last Modified: {{ assessment.last_modified }}</h6>
+                <h6 class="card-title">Pass Mark: {{ assessment.pass_mark }}%</h6>
+                <h6 class="card-title">Duration: {{ duration_in_time }} mins</h6>
+                <a href="{% url 'assessments:edit' assessment.id %}">
+                    <button class="btn btn-primary">Edit Assessment</button>
+                </a>
+                <a href="{% url 'assessments:questions:create' assessment.id  %}">
+                    <button class="btn btn-primary">Add Question</button>
+                </a>
+            </div>
+            <div class="col-md-4 offset-md-4">
+                <h6 class="card-title">Attempted by (Number of Applicants): {{ total_assessment_result }}</h6>
+                <h6 class="card-title">Completed by (Number of Applicants): {{ total_complete_assessment_result }}</h6>
+                <h6 class="card-title">Uncompleted by (Number of Applicants): {{ total_incomplete_result }}</h6>
+            </div>
         </div>
+
     </div>
     <hr>
-    <h2>Questions</h2>
+    {% comment %} <h2>Questions</h2>
     {% for question in assessment.questions.all %}
         <p><a href="{% url 'assessments:questions:detail' assessment.id  question.id %}">{{ question }}</a></p>
-    {% endfor %}
+    {% endfor %} {% endcomment %}
+
+    <div class="card">
+        <div class="card-header">
+            <h4>Candidates</h4>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Questions attempted</th>
+                        <th scope="col">Correct answers</th>
+                        <th scope="col">Incorrect answers</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Percentage Score</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assessment_result in complete_assessment_result%}
+                    <tr>
+                        <td>{{assessment_result.applicant}}</td>
+                        <td>{{assessment_result.number_of_attempted_questions | date}}</td>
+                        <td>{{assessment_result.number_of_correct_answers}}</td>
+                        <td>{{assessment_result.number_of_incorrect_answers}}</td>
+                        <td>{{assessment_result.number_of_correct_answers}}/{{assessment.questions.count}}</td>
+                        <td>{{assessment_result.percentage_score| floatformat:0}}%</td>
+                        <td>{% if assessment_result.score >= assessment.pass_mark %}Pass{%else%}Failed{%endif%}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 {%  endblock %}

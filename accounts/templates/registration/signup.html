@@ -1,0 +1,107 @@
+{% extends 'accounts.html' %}
+
+{% block title %}
+    <title>Register | Aptist Assessment App </title>
+{% endblock %}
+
+{% block content %}
+    {% include 'message.html' %}
+    {% if form.errors%}
+        {% for field in form%}
+            {%for error in field.errors%}
+                <p class='alert alert-danger'>{{error}}</p>
+            {%endfor%}
+        {%endfor%}
+    {% endif %}
+    <div class="nk-block-head">
+        <div class="nk-block-head-content">
+            <h4 class="nk-block-title">Register</h4>
+            <div class="nk-block-des">
+                <p>Create New Aptist Account</p>
+            </div>
+        </div>
+    </div>
+    <form method='POST'>
+        {% csrf_token %}
+        <div class='row'>
+            <div class="form-group col-6">
+                <label class="form-label" for="id_first_name">First Name</label>
+                <div class="form-control-wrap">
+                    <input type="text" class="form-control form-control-lg" name="first_name" id="id_first_name" maxlength="150" placeholder="Enter your first name">
+                </div>
+            </div>
+            <div class="form-group col-6">
+            <label class="form-label" for="id_last_name">Last Name</label>
+            <div class="form-control-wrap">
+                <input type="text" class="form-control form-control-lg" name="last_name" id="id_last_name" maxlength="150" placeholder="Enter your last name">
+            </div>
+        </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_email">Email</label>
+            <div class="form-control-wrap">
+                <input type="email" class="form-control form-control-lg" name="email" id="id_email" maxlength="200" autofocus required placeholder="Enter your email address">
+            </div>
+        </div>
+        <div class=row>
+            <div class="form-group col-6">
+                <label class="form-label" for="id_password1">Password</label>
+                <div class="form-control-wrap">
+                    <input type="password" class="form-control form-control-lg" id="id_password1" name="password1" autocomplete="new-password" required placeholder="Enter your password">
+                </div>
+            </div>
+            <div class="form-group col-6">
+                <label class="form-label" for="id_password">Confirm Password</label>
+                <div class="form-control-wrap">
+                    <input type="password" class="form-control form-control-lg" id="id_password2" name="password2" autocomplete="new-password" required placeholder="Confirm your password">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_company_name">Company name</label>
+            <div class="form-control-wrap">
+                <input type="text" class="form-control form-control-lg" id="id_company_name" name="company_name" maxlength="200" required placeholder="Company name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_company_size">Company size</label>
+            <div class="form-control-wrap">
+                <select class="form-control form-control-lg" id="id_company_size">
+                    <option value selected>---------</option>
+                    <option value="small">1 - 50</option>
+                    <option value="mid">51 - 200</option>
+                    <option value="big">201 - 1000</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type='submit' class="btn btn-lg btn-primary btn-block" value="Register">
+        </div>
+    </form>
+    <div class="form-note-s2 text-center pt-4"> Already have an account? <a href="{% url 'accounts:login' %}"><strong>Sign in instead</strong></a>
+    </div>
+
+{% endblock %}
+
+
+
+
+{% comment %} {% extends 'base.html' %}
+
+{% block content %}
+    <h2>Sign Up</h2>
+    {% include 'message.html' %}
+    {% if form.errors%}
+        {% for field in form%}
+            {%for error in field.errors%}
+                <p class='alert alert-danger'>{{error}}</p>
+            {%endfor%}
+        {%endfor%}
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type='submit' value='Submit'>
+    </form>
+
+{% endblock %} {% endcomment %}

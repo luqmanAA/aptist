@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- ========== Meta Tags ========== -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- ========== Page Title ========== -->
+    <title>Aptist - Modern Assessment Test App</title>
+
+    {% load static %}
+    <!-- ========== Favicon Icon ========== -->
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}" type="image/x-icon">
+
+    <!-- ========== Start Stylesheet ========== -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
+    
+    <link href="{% static 'css/bootsnav.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/home_style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
+    <!-- ========== End Stylesheet ========== -->
+
+    <!-- ========== Google Fonts ========== -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <!-- Header 
+    ============================================= -->
+    <header id="home">
+
+        <!-- Start Navigation -->
+        <nav class="navbar navbar-default attr-bg navbar-fixed dark no-background bootsnav">
+
+            <div class="container">
+
+                <!-- Start Atribute Navigation -->
+                <div class="attr-nav light">
+                    <ul>
+                        <li class="button">
+                            <a href="{% url 'accounts:signup' %}">Sign Up</a>
+                        </li>
+                    </ul>
+                </div>        
+                <!-- End Atribute Navigation -->
+
+                <!-- Start Header Navigation -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand" href="index.html">
+                        <img src="{% static 'img/logo.png' %}" class="logo" alt="Logo">
+                    </a>
+                </div>
+                
+            </div>
+        </nav>
+        <!-- End Navigation -->
+
+    </header>
+    <!-- End Header -->
+
+   <!-- Start Banner 
+    ============================================= -->
+    <div class="banner-area responsive-top-pad inc-shape text-default">
+        <div class="container">
+            <div class="double-items">
+                <div class="row align-center">
+
+                    <div class="col-lg-6 info shape">
+                        <h2 class="wow fadeInDown" data-wow-duration="1s">Assessment test app <strong>for businesses like you</strong></h2>
+                        <p class="wow fadeInLeft" data-wow-duration="1.5s">
+                            Our screening tests identify the best candidates and make your hiring decisions faster, easier, and bias-free.
+                        </p>
+                        <div class="bottom">
+                            <a class="btn btn-md btn-gradient get_started" href="{% url 'accounts:signup' %}">Get Started</a>
+                        </div>
+                    </div>
+
+                     <div class="col-lg-5 offset-lg-1 width-140 thumb wow fadeInRight" data-wow-duration="1s">
+                        {% load static %}
+                        <img src="{% static 'img/4.png' %}" alt="Thumb">
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Banner -->
+
+
+    <!-- End Footer -->
+
+    <!-- jQuery Frameworks
+    ============================================= -->
+    
+
+</body>
+</html>

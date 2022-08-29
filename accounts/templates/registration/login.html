@@ -1,0 +1,60 @@
+{% extends 'accounts.html' %}
+
+{% block title %}
+    <title>Register | Aptist Assessment App </title>
+{% endblock %}
+
+{% block content %}
+    {% if form.errors %}
+        <p>
+            Your username and password didn't match. Please try again
+        </p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.authenticated %}
+            <p>
+                Your account doesn't have access to view this page.
+                To proceed, please login with an account that has access.
+            </p>
+        {% else %}
+            <p>
+                Please login to view this page
+            </p>
+        {% endif %}
+    {% endif %}
+    <div class="nk-block-head">
+        <div class="nk-block-head-content">
+            <h4 class="nk-block-title">Sign</h4>
+            <div class="nk-block-des">
+                <p>Access your Aptist account with your email and password</p>
+            </div>
+        </div>
+    </div>
+    <form action="{% url 'accounts:login' %}" method='POST'>
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="id_username">Email</label>
+            <div class="form-control-wrap">
+                <input type="email" class="form-control form-control-lg" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="200" required="" id="id_username" placeholder="Enter your email address">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="id_password">Password</label>
+            <a class="link link-primary link-sm" href="{% url 'accounts:password_reset' %}">Forgot Password?</a>
+            <div class="form-control-wrap">
+                <input type="password" class="form-control form-control-lg" id="id_password" name="password" autocomplete="current-password" required placeholder="Enter your password">
+            </div>
+        </div>
+        <div class="form-group">
+            <input type='submit' class="btn btn-lg btn-primary btn-block" value="Sign in">
+        </div>
+    </form>
+    <div class="form-note-s2 text-center pt-4"> Do not have an account?
+        <a href="{% url 'accounts:signup' %}"><strong>Create one</strong></a>  
+    </div>
+    <div class="form-note-s2 text-center pt-4"> Forgot password?
+        <a href="{% url 'accounts:password_reset' %}"><strong>Reset</strong></a>
+    </div>
+
+{% endblock %}

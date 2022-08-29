@@ -1,7 +1,4 @@
 from django.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
-from django.utils.text import slugify
 
 from assessments.models import Assessment
 
@@ -43,34 +40,34 @@ class Choice(models.Model):
         return self.selected_choice
 
 
-class QuestionAnswered(models.Model):
-    question = models.ForeignKey(
-        Question,
-        on_delete=models.CASCADE
-    )
+# class QuestionAnswered(models.Model):
+#     question = models.ForeignKey(
+#         Question,
+#         on_delete=models.CASCADE
+#     )
 
-    def __str__(self):
-        return self.question.question_title
+#     def __str__(self):
+#         return self.question.question_title
 
-    def get_selected_choice(self):
-        return self.selected_choice.choice.choice_text
+#     def get_selected_choice(self):
+#         return self.selected_choice.choice.choice_text
 
 
-class SelectedChoice(models.Model):
-    question_answered = models.ForeignKey(
-        QuestionAnswered,
-        on_delete=models.CASCADE,
-        related_name='selected_choice'
-    )
-    choice = models.ForeignKey(
-        Choice,
-        on_delete=models.CASCADE,
-        related_name='selected_choice',
-        null=True,
-        blank=True
-    )
-    none_choice = models.CharField(max_length=200, null=True, blank=True)
+# class SelectedChoice(models.Model):
+#     question_answered = models.OneToOneField(
+#         QuestionAnswered,
+#         on_delete=models.CASCADE,
+#         related_name='selected_choice'
+#     )
+#     choice = models.OneToOneField(
+#         Choice,
+#         on_delete=models.CASCADE,
+#         related_name='selected_choice',
+#         null=True,
+#         blank=True
+#     )
+#     none_choice = models.CharField(max_length=200, null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.choice.choice_text} " \
-               f"for question: {self.choice.question.question_title}"
+#     def __str__(self):
+#         return f"{self.choice.choice_text} " \
+#                f"for question: {self.choice.question.question_title}"

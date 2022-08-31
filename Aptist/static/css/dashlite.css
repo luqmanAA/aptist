@@ -34195,8 +34195,8 @@ button.close {
 .nk-tb-head .nk-tb-col {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  color: #8094ae;
-  font-size: 0.9em;
+  color: #000;
+  font-size: 1.1em;
   border-bottom: 1px solid rgba(219, 223, 234, 0.9);
 }
 .nk-tb-col-action {
@@ -40765,3 +40765,45 @@ div.dataTables_wrapper div.dataTables_filter .dark-mode .nk-header-search input,
 }
 
 /*! END @iO */
+
+.dropdown-toggle {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle .tooltiptext {
+    visibility: hidden;
+    width: 200px !important;
+    background-color: #004aad;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -95px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.dropdown-toggle .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.dropdown-toggle:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.errorlist {
+    color: red;
+}

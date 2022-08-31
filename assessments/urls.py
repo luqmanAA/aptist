@@ -12,6 +12,6 @@ urlpatterns = [
     path('<uuid:pk>/toggle', views.ToggleAssessmentVisibilityView.as_view(), name='toggle-publish'),
     path('<uuid:pk>/toggle', views.ToggleAssessmentDeleteView.as_view(),
          name='toggle-delete'),
-    path('<uuid:assessment_id>/questions/', include('questions.urls', namespace='questions')),
+    path('<uuid:assessment_id>/questions/', include('questions.urls')),
 
 ]

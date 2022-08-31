@@ -1,29 +1,17 @@
 {% extends 'base.html' %}
-
+{% block styles %}
+<style>
+    .box{
+        border: 1px solid green;
+        position:absolute;
+        color: white;
+        top: 19px;
+        left: 30px;
+        background-color: black;
+    }
+</style>
+{% endblock %}
 {% block content %}
-    {% comment %} <div>
-        {% for assessment in assessment_list %}
-            <p>
-                <a href="{% url 'assessments:detail' assessment.id %}">
-                    {{ assessment }} -
-                </a>
-                {% if assessment.is_published %}
-                    <span>Active</span>
-                    {% else %}
-                    <span>Inactive</span>
-                {% endif %}
-            </p>
-            {% if assessment.is_published %}
-                <a href="{% url 'assessments:toggle-publish' assessment.id %}">Unpublish</a>
-            {% else %}
-                <a href="{% url 'assessments:toggle-publish' assessment.id %}">Publish</a>
-            {% endif %}
-        {% endfor %}
-        <hr>
-        <a href="{% url 'assessments:create' %}"><button>
-            Create Assessment
-        </button></a>
-    </div> {% endcomment %}
 
     <div class="nk-block-head nk-block-head-sm">
         <div class="nk-block-between">
@@ -32,6 +20,18 @@
                 <div class="nk-block-des text-soft">
                     <p>You have total {{assessment_list.count}} assessments</p>
                 </div>
+            </div><!-- .nk-block-head-content -->
+            <div class="nk-block-head-content">
+                <div class="toggle-wrap nk-block-tools-toggle">
+                    <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
+                    <div class="toggle-expand-content" data-content="pageMenu">
+                        <ul class="nk-block-tools g-3">
+                            <li class="nk-block-tools-opt d-none d-sm-block" data-bs-toggle="modal" data-bs-target="#modalCreate">
+                                <a href="#" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Create Assessment</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div><!-- .toggle-wrap -->
             </div><!-- .nk-block-head-content -->
         </div><!-- .nk-block-between -->
     </div><!-- .nk-block-head -->
@@ -42,22 +42,25 @@
                     <div class="card h-100">
                         <div class="card-inner">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <a href="html/lms/courses.html" class="d-flex align-items-center">
-                                    <div class="user-avatar sq bg-purple"><span>GD</span></div>
+                                <a href="{% url 'assessments:detail' assessment.id %}" class="d-flex align-items-center">
+                                    <div class="user-avatar sq bg-purple"><span>{{assessment.name | slice:2}}</span></div>
                                     <div class="ms-3">
                                         <h6 class="title mb-1">{{assessment.name}}</h6>
                                         <span class="sub-text">{{assessment.questions.count}} Questions</span>
                                     </div>
                                 </a>
+                                {% if assessment.is_published%}
+                                <input type='hidden' value="{% url 'applicants:start-test' assessment.id %}" id="assessment-{{assessment.id}}">
                                 <div class="dropdown">
-                                    <a href="#" class="dropdown-toggle btn btn-sm btn-icon btn-trigger mt-n1 me-n1" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <ul class="link-list-opt no-bdr">
-                                            <li><a data-bs-toggle="modal" href="#modalEdit"><em class="icon ni ni-edit"></em><span>Edit Category</span></a></li>
-                                            <li><a data-bs-toggle="modal" href="#modalDelete"><em class="icon ni ni-delete"></em><span>Delete Category</span></a></li>
-                                        </ul>
-                                    </div>
+                                    <a href="#" class="dropdown-toggle btn btn-sm btn-icon btn-trigger mt-n1 me-n1 copy" id="assessment-{{ forloop.counter }}"
+                                    data-bs-toggle="dropdown"
+                                    onclick=copyText("assessment-{{assessment.id}}")>
+                                        <span class="tooltiptext" id="myTooltip-assessment-{{assessment.id}}">Copy unique link for applicants</span>
+                                        {% comment %} <i class="fa-solid fa-copy"></i> {% endcomment %}
+                                        Copy Link
+                                    </a>
                                 </div>
+                                {% endif %}
                             </div>
                             <p>{% if assessment.description %}
                                 {{assessment.description}}
@@ -94,4 +97,70 @@
             {% endfor %}
         </div>
     </div><!-- .nk-block -->
+
+    <div class="modal fade" id="modalCreate">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close"> <em class="icon ni ni-cross-sm"></em></a>
+                <div class="modal-body modal-body-md">
+                    <h5 class="title">Add Assessment</h5>
+                    <form action="{% url 'assessments:create' %}" method="POST" class="pt-2">
+                        {% csrf_token %}
+                        <div class="row gy-3 gx-gs">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="full-name">Assessment Name</label>
+                                    <div class="form-control-wrap">
+                                        <input type="text" class="form-control" name="name" maxlength="200" required id="id_name" placeholder="e.g. Python Basic Skill Test">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_description">Description</label>
+                                    <div class="form-control-wrap">
+                                        <textarea class="form-control" name="description" id="id_description" placeholder="Give brief details about the assessment (optional)"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_duration">Duration</label>
+                                    <div class="form-control-wrap">
+                                        <input type="text" class="form-control" name="duration" required id="id_duration" placeholder="Time(in HH:MM:SS)">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_pass_mark">Pass Mark (%)</label>
+                                    <div class="form-control-wrap">
+                                        <input type="number" class="form-control" name="pass_mark" required id="id_pass_mark" placeholder="e.g. 80">
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <button data-bs-dismiss="modal" type="submit" class="btn btn-primary">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let copyText = function(id){
+            let elementURL = document.getElementById(id).value;
+            rootURL = window.location.origin;
+            assessmentURL = rootURL + elementURL;
+            navigator.clipboard.writeText(assessmentURL);
+            tooltipID = "myTooltip-"+id
+            let tooltip = document.getElementById(tooltipID);
+            tooltip.innerHTML = "Copied";
+
+        }
+    </script>
 {% endblock %}

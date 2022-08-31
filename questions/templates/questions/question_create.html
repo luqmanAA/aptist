@@ -1,61 +1,167 @@
 {% extends 'base.html' %}
 {% block content %}
-    <div>
-        <h1>Add new question</h1>
-        <form class="form-horizontal" method="post">
-            {% csrf_token %}
-            <div class="row spacer">
-                <div class="col-2">
-                    <label>{{ question_form.question_title.label }}</label>
-                </div>
-                <div class="col-4">
-                    <div class="input-group">
-                        {{ question_form.question_title }}
-                    </div>
-                </div>
-            </div>
 
-            <div class="row spacer">
-                <div class="col-2">
-                    <label>{{ question_form.description.label }}</label>
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between g-3">
+            
+            <div class="nk-block-head-content">
+                <div class="mb-3">
+                    <a href="{% url 'assessments:questions:list' assessment.id %}">
+                        Back
+                    </a>
                 </div>
-                <div class="col-4">
-                    <div class="input-group">
-                        {{ question_form.description }}
-                    </div>
-                </div>
-            </div>
-
-            {{ choice_formset.management_form }}
-            {% for form in choice_formset %}
-                <div class="row form-row spacer space_top">
-                    <div class="col-2">
-                        <label>{{ form.choice_text.label }}</label>
-                    </div>
-                    <div class="col-4">
-                        <div class="input-group" id="choice-{{ forloop.counter }}" data-choice-id="choice-id-{{ forloop.counter }}">
-                            {{ form.choice_text }}
-                            <div class="input-group-append">
-                                <button class="btn btn-success add-form-row">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-2 form-check">
-{#                        <input class="form-check-input" type="radio" name="is_correct" value="True" id="choice-radio-{{ forloop.counter }}">#}
-{#                        <label class="form-check-label" for="choice-radio-{{ forloop.counter }}">#}
-{#                            Mark correct#}
-{#                      </label>#}
-                        {{ form.is_correct }}
-                        <label>{{ form.is_correct.label }}</label>
-                    </div>
-                </div>
-            {% endfor %}
-        <div class="row spacer space_top">
-            <div class="col-4 offset-2">
-                <button type="submit" class="btn btn-block btn-primary" id="create_btn">Create</button>
+                <h3 class="nk-block-title page-title"><strong>Add a question for </strong>{{assessment.name}}</h3>
             </div>
         </div>
-        </form>
-
     </div>
+    <!--.nk-block-head -->
+
+    <div class="nk-block">
+        {% if form.errors %}
+            <p>
+                {{form.errors}}
+            </p>
+        {% endif %}
+        <div class="card">
+            <div class="card-inner">
+                <form method="post" action="" id="createQuestion">
+                    {{form.non_field_errors}}
+                    {% csrf_token %}
+                    <div class="row gy-4">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">{{ question_form.question_title.label }}</label>
+                                <div class="form-control-wrap">
+                                    {{question_form.question.errors}}
+                                    {{ question_form.question_title }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">{{ question_form.description.label }}</label>
+                                <div class="form-control-wrap">
+                                    {{question_form.description.errors}}
+                                    <textarea name="description" cols="15" rows="3" class="form-control" 
+                                    placeholder="More information about the question (optional)"  
+                                    id="id_description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <!--col-->
+                            <div class="col-md-6">
+                                {{ choice_formset.management_form }}
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="student-id">Choice One</label>
+                                        <div class="form-control-wrap input-group">
+                                            <input type="radio" name="answer" id="choiceOneSelect" class="me-3" required="required">
+                                            <input type="text" name="choiceOne" class="form-control" required placeholder="Enter your answer option (required)" id="choiceOne">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="student-id">Choice Two</label>
+                                        <div class="form-control-wrap input-group">
+                                            <input type="radio" name="answer" id="choiceTwoSelect" class="me-3" required="required">
+                                            <input type="text" name="choiceTwo" class="form-control" required placeholder="Enter your answer option (required)" id="choiceTwo">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="student-id">Choice Three</label>
+                                        <div class="form-control-wrap input-group">
+                                            <input type="radio" name="answer" id="choiceThreeSelect" class="me-3" required="required">
+                                            <input type="text" name="choiceThree" class="form-control" placeholder="Enter your answer option (required)" id="choiceThree">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="student-id">Choice Four</label>
+                                        <div class="form-control-wrap input-group">
+                                            <input type="radio" name="answer" id="choiceFourSelect" class="me-3" required="required">
+                                            <input type="text" name="choiceFour" class="form-control" placeholder="Enter your answer option (required)" id="choiceFour">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% comment %} <div class="col-md-6">
+                            {{ choice_formset.management_form }}
+                            {% for form in choice_formset %}
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="student-id">{{ form.choice_text.label }}</label>
+                                    <div class="form-control-wrap input-group" id="choice-{{ forloop.counter }}"
+                                        data-choice-id="choice-id-{{ forloop.counter }}">
+                                        {{ form.choice_text }}
+                                        {% if forloop.counter == 2 %}
+                                        <div class="input-group-append">
+                                            <button class="btn btn-success add-form-row">+</button>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                {{ form.is_correct }}
+                                <label>{{ form.is_correct.label }}</label>
+                            </div>
+                            {% endfor %}
+                        </div> {% endcomment %}
+
+                        <div class="col-sm-12">
+                            <button type="submit" class="btn btn-primary" id="create_btn">Add</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    
+<script>
+    document.getElementById('createQuestion').onsubmit = function(e){
+        e.preventDefault();
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+        let question = document.getElementById('id_question_title').value
+        let description = document.getElementById('id_description').value
+        let choiceOne = document.getElementById('choiceOne').value
+        let choiceTwo = document.getElementById('choiceTwo').value
+        let choiceThree = document.getElementById('choiceThree').value
+        let choiceFour = document.getElementById('choiceFour').value
+        let choicesList = [choiceOne, choiceTwo, choiceThree, choiceFour]
+        const radioButtons = document.querySelectorAll('input[name="answer"]');
+        let formdata = new FormData()
+        formdata.append('question_title', question)
+        if(description){
+            formdata.append('description', description)
+        }
+        
+        for(let i=0; i < radioButtons.length; i++){
+            if(radioButtons[i].checked){
+                formdata.append(choicesList[i], true)
+            }
+            else{
+                formdata.append(choicesList[i], false)
+            }
+        }
+        console.log(formdata)
+        const url = window.location.pathname
+        let options = {
+            method: 'POST',
+            body: formdata,
+            headers: {
+                'X-CSRFToken': csrftoken,
+            }
+        }
+        fetch(url, options)
+                .then(async response => {
+                    const url = await response.json()
+                    window.location.pathname = url.redirect_url
+                })
+        
+
+    }
+</script>
+
+   
 {% endblock %}
+
+
+

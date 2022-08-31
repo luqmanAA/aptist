@@ -1,0 +1,65 @@
+{% extends 'accounts.html' %}
+
+{% block title %}
+    <title>Register | Aptist Assessment App </title>
+{% endblock %}
+
+{% block content %}
+    <div class="card">
+        <div class="card-inner card-inner-lg">
+            <div class="nk-block-head">
+                <div class="nk-block-head-content">
+                    <h4 class="nk-block-title">Take Assessment</h4>
+                    <div class="nk-block-des">
+                        <p>Enter your details</p>
+                    </div>
+                </div>
+            </div>
+            {% include 'message.html' %}
+            {% if form.errors%}
+                {% for field in form%}
+                    {%for error in field.errors%}
+                        <p class='alert alert-danger'>{{error}}</p>
+                    {%endfor%}
+                {%endfor%}
+            {% endif %}
+            <form method='POST' action="{% url 'accounts:applicants:applicant-signup' %}">
+                {% csrf_token %}
+                <div class='row'>
+                    <div class="form-group col-6">
+                        <label class="form-label" for="id_first_name">First Name</label>
+                        <div class="form-control-wrap">
+                            <input type="text" class="form-control form-control-lg" name="first_name" id="id_first_name" maxlength="200" placeholder="Enter your first name">
+                        </div>
+                    </div>
+                    <div class="form-group col-6">
+                    <label class="form-label" for="id_last_name">Last Name</label>
+                    <div class="form-control-wrap">
+                        <input type="text" class="form-control form-control-lg" name="last_name" id="id_last_name" maxlength="200" placeholder="Enter your last name">
+                    </div>
+                </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="id_email">Email</label>
+                    <div class="form-control-wrap">
+                        <input type="email" class="form-control form-control-lg" name="email" id="id_email" maxlength="200" required placeholder="Enter your email address">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type='submit' class="btn btn-lg btn-primary btn-block" value="Submit">
+                </div>
+            </form>
+        </div>
+    </div>    
+
+{% endblock %}
+
+
+
+
+{% comment %} {% extends 'base.html' %}
+
+{% block content %}
+    
+
+{% endblock %} {% endcomment %}

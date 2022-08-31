@@ -1,0 +1,17 @@
+{% extends 'generic.html' %}
+{% block content %}
+    <div class="card col-6">
+
+        <div class="card-body">
+            <h5 class="card-title">Hello {{ applicant_name }},</h5>
+            <p class="card-text">
+                Great news! You've been invited to take a TestGorilla assessment.
+            </p>
+            <p class="card-title">
+                You can start the assessment by clicking here:
+            </p>
+            <a href="{% url 'accounts:applicants:applicant-signup' %}?next={{ accounts:applicants:start-test }}" class="btn btn-primary">Go to assessment</a>
+            
+        </div>
+    </div>
+{% endblock %}

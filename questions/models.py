@@ -7,7 +7,7 @@ from assessments.models import Assessment
 
 class Question(models.Model):
     question_title = models.CharField(max_length=250)
-    description = models.CharField(max_length=250, blank=True)
+    description = models.CharField(max_length=250, null=True, blank=True)
     assessments = models.ForeignKey(
         Assessment,
         on_delete=models.CASCADE,

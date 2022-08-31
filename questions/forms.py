@@ -50,20 +50,11 @@ class QuestionForm(forms.ModelForm):
         label='Question',
         widget=forms.Textarea(
             attrs={
-                'cols': 20,
-                'rows': 4,
+                'cols': 15,
+                'rows': 3,
                 'class': 'form-control',
-                'placeholder': 'For example: If you were an animal, what would you be?'
-            }
-        ))
-    description = forms.CharField(
-        label='Details',
-        widget=forms.Textarea(
-            attrs={
-                'cols': 20,
-                'rows': 4,
-                'class': 'form-control',
-                'placeholder': 'More information about the question (optional)'
+                'placeholder': 'For example: If you were an animal, what would you be?',
+                'required': True,
             }
         ))
 
@@ -77,8 +68,15 @@ class ChoiceForm(forms.ModelForm):
         label='Choice',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Enter your answer option'
+            'placeholder': 'Enter your answer option',
         })
+    )
+    is_correct = forms.RadioSelect(
+        attrs={
+            'class': 'form-control',
+            'name':'is_correct',
+            'value': True,
+        }
     )
 
     class Meta:
@@ -86,7 +84,7 @@ class ChoiceForm(forms.ModelForm):
         fields = ('choice_text', 'is_correct',)
 
 
-ChoiceFormset = formset_factory(ChoiceForm, extra=3)
+ChoiceFormset = formset_factory(ChoiceForm, extra=2)
 
 # class ChoiceForm(forms.ModelForm):
 

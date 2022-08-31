@@ -12,30 +12,48 @@ from django.urls import reverse
 from accounts.models import Organization
 from results.models import Result
 
+from .forms import CreateAssessmentForm
 from .models import Assessment
 
 
 # Create your views here.
 
 
-class CreateAssessmentView(LoginRequiredMixin, CreateView):
-    model = Assessment
-    template_name_suffix = '_create'
-    fields = (
-        'name',
-        'duration',
-        'pass_mark'
-    )
+# class CreateAssessmentView(LoginRequiredMixin, CreateView):
+#     model = Assessment
+#     template_name_suffix = '_create'
+#     fields = (
+#         'name',
+#         'description',
+#         'duration',
+#         'pass_mark'
+#     )
 
-    def form_valid(self, form):
-        organization = Organization.objects.filter(
-            email=self.request.user.email
-        ).first()
-        form.instance.created_by = organization
-        return super().form_valid(form)
+#     def form_valid(self, form):
+#         organization = Organization.objects.filter(
+#             email=self.request.user.email
+#         ).first()
+#         form.instance.created_by = organization
+#         return super().form_valid(form)
 
-    def get_success_url(self):
-        return reverse('assessments:detail', args=[self.object.id])
+#     def get_success_url(self):
+#         return reverse('assessments:detail', args=[self.object.id])
+
+
+class CreateAssessmentView(View):
+
+    def post(self, request, **kwargs):
+        form = CreateAssessmentForm(request.POST)
+        if form.is_valid():
+            organization = Organization.objects.filter(
+                email=self.request.user.email
+            ).first()
+            form.instance.created_by = organization
+            assessment = form.save()
+            return HttpResponseRedirect(
+                reverse('assessments:questions:create', args=[assessment.id])
+            )
+        
 
 
 class EditAssessmentView(LoginRequiredMixin, UpdateView):
@@ -57,6 +75,13 @@ class AssessmentListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         return Assessment.objects.filter(created_by_id=self.request.user.id)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        organization = Organization.objects.get(id=self.request.user.id)
+        context['organization_name'] = organization
+        context['organization_email'] = organization.email
+        return context
 
 
 class AssessmentDetailView(LoginRequiredMixin, DetailView):
@@ -67,13 +92,15 @@ class AssessmentDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         assessment = self.get_object()
         total_assessment_result = Result.objects.filter(assessment=assessment).count()
-        complete_assessment_result = Result.objects.filter(assessment=assessment).exclude(score__isnull=True)
+        complete_assessment_result = Result.objects.filter(assessment=assessment).exclude(percentage_score__isnull=True)
         total_complete_assessment_result = complete_assessment_result.count()
         context['duration_in_time'] = assessment.duration.total_seconds()/60
         context['total_assessment_result'] = total_assessment_result
         context['total_complete_assessment_result'] = total_complete_assessment_result
         context['complete_assessment_result'] = complete_assessment_result
         context['total_incomplete_result'] = total_assessment_result - total_complete_assessment_result
+        context['organization_name'] = assessment.created_by
+        context['organization_email'] = assessment.created_by.email
         return context
         
 

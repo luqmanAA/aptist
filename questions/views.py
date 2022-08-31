@@ -1,8 +1,13 @@
-from django.http import HttpResponseRedirect
+import json
+
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render, reverse
 from django.views import View
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView, FormView
+
+from assessments.models import Assessment
 
 from .forms import CreateQuestionForm, AddChoiceForm, QuestionForm, ChoiceFormset
 from .models import Question, Choice
@@ -10,59 +15,54 @@ from .models import Question, Choice
 
 # Create your views here.
 
-
+@login_required
 def create_question_with_choices(request, assessment_id):
-
+    assessment = Assessment.objects.filter(id=assessment_id).first()
     # check if the request to this view is POST then bound it to the forms
     if request.method == 'POST':
-        question_form = QuestionForm(request.POST)
-        choice_formset = ChoiceFormset(request.POST)
+        formdata = request.POST.dict()
+        question_title = formdata.pop('question_title')
+        if 'description' in formdata:
+            description = formdata.pop('description')
+        else:
+            description = None
+        choices = formdata      
 
-        # validate the forms
-        if question_form.is_valid() and choice_formset.is_valid():
-
-            # create question object form question form but don't save yet
-            question = question_form.save(commit=False)
-
-            # attach the assessment on which the question is created to it
-            question.assessments_id = assessment_id
-
-            # then save
-            question.save()
-
-            # loop through the set of choice form to create choice object for each
-            for choice_form in choice_formset:
-                choice_data = choice_form.cleaned_data.get('choice_text')
-                is_correct = choice_form.cleaned_data.get('is_correct')
-                if choice_data:
-                    # create choice object but don't save yet
-                    choice = Choice(choice_text=choice_data, is_correct=is_correct)
-
-                    # attach the question the choice belongs to
-                    choice.question = question
-
-                    # now save
-                    choice.save()
-
-            return HttpResponseRedirect(
-                reverse('assessments:detail', args=[assessment_id])
+        question = Question.objects.create(
+            assessments_id = assessment_id,
+            question_title=question_title,
+            description=description,
             )
+        # loop through the set of choice to create choice object for each
+        for choice in choices:
+            if choices[choice] == 'true':
+                Choice.objects.create(
+                    choice_text=choice, is_correct=True, question=question)
+            else:
+                Choice.objects.create(
+                    choice_text=choice, question=question)
+
+        redirect_url = reverse('assessments:detail', args=[assessment_id])
+        return JsonResponse(
+            {'redirect_url': redirect_url}
+        )
     else:
         # return empty forms if request is not POST
         question_form = QuestionForm()
-        choice_formset = ChoiceFormset()
+        # choice_formset = ChoiceFormset()
     return render(
         request,
         'questions/question_create.html',
         {
+            'assessment': assessment,
             'question_form': question_form,
-            'choice_formset': choice_formset,
+            # 'choice_formset': choice_formset,
         })
 
 
-class CreateQuestionView(FormView):
-    form_class = AddChoiceForm
-    template_name = 'questions/question_create.html'
+# class CreateQuestionView(FormView):
+#     form_class = AddChoiceForm
+#     template_name = 'questions/question_create.html'
 
 
 class EditQuestionView(UpdateView):
@@ -80,10 +80,16 @@ class EditQuestionView(UpdateView):
 
 class QuestionListView(ListView):
     model = Question
+    paginate_by = 5
+    
+    def get_queryset(self):
+        assessment_id = self.kwargs['assessment_id']
+        return Question.objects.filter(assessments_id=assessment_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['assessment_id'] = self.kwargs['pk']
+        context['question'] = self.object_list.first()
+        context['assessment_id'] = self.kwargs['assessment_id']
         return context
 
 

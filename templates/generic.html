@@ -31,12 +31,9 @@
                                 <img class="logo-dark logo-img logo-img-lg" src="{% static 'img/logo-dark.png' %}" alt="logo-dark">
                             </a>
                         </div>
-                        <div class="card">
-                            <div class="card-inner card-inner-lg">
-                                {% block content %}
-                                {% endblock %}
-                            </div>
-                        </div>
+                        {% block content %}
+                        
+                        {% endblock %}
                     </div>
                     <div class="nk-footer nk-auth-footer-full">
                         <div class="container wide-lg">

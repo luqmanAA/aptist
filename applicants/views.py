@@ -3,6 +3,7 @@ import json
 from pytimeparse.timeparse import timeparse
 
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db.utils import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -24,7 +25,7 @@ from .models import Applicant
 class CreateApplicantView(CreateView):
     model = Applicant
     fields = ('first_name', 'last_name', 'email')
-    template_name = 'registration/signup.html'
+    template_name = 'applicants/register.html'
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -49,12 +50,13 @@ class CreateApplicantView(CreateView):
     def get_success_url(self):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
-        return ('/')
+        
+        return (self.request.META.get('HTTP_REFERER'))            
 
 
 class AssessmentTipView(View):
 
-    def get(self, request, pk, **kwargs):
+    def get(self, request, pk, **kwargs): 
         assessment = get_object_or_404(Assessment, id=pk)
         number_of_question = assessment.questions.count()
         duration = assessment.duration
@@ -75,7 +77,7 @@ class AssessmentTipView(View):
     def post(self, request, pk, **kwargs):
         return HttpResponseRedirect(
             reverse(
-                'applicants:start-test',
+                'applicants:test-tip',
                 args=[pk]
             )
         )
@@ -110,9 +112,17 @@ class StartAssessmentView(View):
             })
             time_to_complete = result.time_started + assessment.duration
             time_now = datetime.now()
-            # if time_now > time_to_complete:
-            #     return HttpResponseRedirect('/')
-
+            if time_now > time_to_complete:
+                context = {
+                    'prompt_title': "Time is over!",
+                    'prompt_body': "You've exhausted the time allocated for the assessment"
+                }
+                return render(
+                    request,
+                    'prompt.html',
+                    context=context
+                )
+            print("from get",self.db_objects)
             context = {
                 'time_to_complete': time_to_complete,
                 'assessment': assessment,
@@ -124,21 +134,34 @@ class StartAssessmentView(View):
             )
 
         except Applicant.DoesNotExist:
-            messages.add_message(
+            if request.user.is_authenticated:
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    "Only applicants can take the assessment")
+                return HttpResponseRedirect(
+                    reverse('accounts:profile')
+                )
+            return render(
                 request,
-                messages.ERROR,
-                "Only applicants can take the assessment")
-            return HttpResponseRedirect('/')
-
+                'applicants/register.html'
+            )
         except Assessment.DoesNotExist:
-            messages.add_message(
+            context = {
+                'prompt_title': "No such assessment exist",
+                'prompt_body': "Sorry, couldn't find the assessment you're trying to take.\
+                    Contact admin to get the right link"
+            }
+            return render(
                 request,
-                messages.ERROR,
-                "Sorry, you got the wrong url, the assessment you're trying to view does not exist")
-            return HttpResponseRedirect('/')
+                'prompt.html',
+                context=context
+            )
 
     def post(self, request, pk):
-        assessment = self.db_objects.get('assessment')
+        print('from post',self.db_objects)
+        assessment = self.db_objects['assessment']
+        print(assessment)
         # applicant = self.db_objects.get('applicant')
         result = self.db_objects.get('result')
         correct_choice_list = []
@@ -179,7 +202,7 @@ class StartAssessmentView(View):
         result.number_of_incorrect_answers = len(
             correct_choice_list) - len(correct_answers)
         result.percentage_score = score * 100
-        # result.save()
+        result.save()
 
         redirect_url = reverse('applicants:assessment-completed', args=[pk])
         return JsonResponse(

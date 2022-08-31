@@ -12,7 +12,9 @@
     <title>Accounts | Aptist Assessment App</title>
     {%endblock%}
     <!-- StyleSheets  -->
-    
+    {% block styles %}
+    {% endblock %}
+    <link rel="stylesheet" href="{% static 'css/fontawesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashlite.css' %}">
 </head>
 
@@ -47,12 +49,6 @@
                                     </a>
                                 </li><!-- .nk-menu-item -->
                                 
-                                <li class="nk-menu-item">
-                                    <a href="html/lms/message.html" class="nk-menu-link">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-chat-fill"></em></span>
-                                        <span class="nk-menu-text">Messages</span>
-                                    </a>
-                                </li><!-- .nk-menu-item -->
                                 <li class="nk-menu-item">
                                     <a href="html/lms/admin-profile.html" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-account-setting-fill"></em></span>
@@ -93,7 +89,7 @@
                                                 <div class="user-info d-none d-xl-block">
                                                     <div class="user-status user-status-active">Administator</div>
                                                     <div class="user-name dropdown-indicator">
-                                                            Abu Bin Ishtiyak
+                                                        {{organization_name}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -102,18 +98,14 @@
                                             <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
                                                 <div class="user-card">
                                                     <div class="user-avatar">
-                                                        <span>AB</span>
+                                                        <span><em class="icon ni ni-user-alt"></em></span>
                                                     </div>
                                                     <div class="user-info">
                                                         <span class="lead-text">
-                                                            {% block organization_name %}
-                                                            Abu Bin Ishtiyak
-                                                            {% endblock %}
+                                                            {{organization_name}}
                                                         </span>
                                                         <span class="sub-text">
-                                                            {% block organization_email %}
-                                                            info@softnio.com
-                                                            {% endblock %}
+                                                            {{organization_email}}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -146,6 +138,43 @@
                             <div class="nk-content-body">
                                 {% block content %}
                                 {% endblock %}
+                                {% block pagination %}
+                                {% if is_paginated %}
+                                    <div class="card-inner">
+                                        <ul class="pagination justify-content-center justify-content-md-start">
+                                                {% if page_obj.has_previous %}
+                                                    <li>
+                                                        <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}">
+                                                            Prev
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}">
+                                                            {{ page_obj.previous_page_number }}
+                                                        </a>
+                                                    </li>
+                                                {% else %}
+                                                <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Prev</a></li>
+                                                {% endif %}
+                                                <li class="page-item active" aria-current="page">
+                                                    <a class="page-link" href="#">{{ page_obj.number }}<span class="visually-hidden">(current)</span></a>
+                                                </li>
+                                                {% if page_obj.has_next %}
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}">
+                                                            {{ page_obj.next_page_number }}
+                                                        </a>
+                                                    </li>
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}">Next</a>
+                                                    </li>
+                                                {% else %}
+                                                    <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a></li>
+                                                {% endif %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                {% endblock %}
                             </div>
                         </div>
                     </div>
@@ -172,6 +201,9 @@
     <!-- JavaScript -->
     <script src="{% static 'js/bundle.js' %}"></script>
     <script src="{% static 'js/scripts.js' %}"></script>
+    <script src="{% static 'js/jquery-3.6.1.min.js' %}"></script>
+    {% block script %}
+    {% endblock %}
 </body>
 
 </html>

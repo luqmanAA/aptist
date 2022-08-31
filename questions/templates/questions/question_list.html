@@ -1,19 +1,67 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div>
-        {% for question in question_list %}
-            <p>
-                <a href="{% url 'assessments:questions:detail' question.assessments_id question.id %}">
-                    {{ question }} -
-                </a>
-            </p>
 
-        {% endfor %}
-        <hr>
-        <a href="{% url 'assessments:questions:create' assessment_id %}"><button>
-            Create Question
-        </button></a>
-    </div>
+    <div class="nk-block-head nk-block-head-sm">
+        <div class="nk-block-between">
+            <div class="nk-block-head-content">
+                <h4 class="page-title">{{question.assessments.name}} > Questions</h4>
+                <div class="nk-block-des text-soft">
+                    <p>You have total {{question_list.count}} questions</p>
+                </div>
+            </div><!-- .nk-block-head-content -->
+            <div class="nk-block-head-content">
+                <div class="toggle-wrap nk-block-tools-toggle">
+                    <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-menu-alt-r"></em></a>
+                    <div class="toggle-expand-content" data-content="pageMenu">
+                        <ul class="nk-block-tools g-3">
+                            <li class="nk-block-tools-opt d-none d-sm-block">
+                                <a href="{% url 'assessments:questions:create' assessment_id %}" class="btn btn-primary"><em class="icon ni ni-plus"></em><span>Add Question</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div><!-- .toggle-wrap -->
+            </div><!-- .nk-block-head-content -->
+        </div><!-- .nk-block-between -->
+    </div><!-- .nk-block-head -->
+
+    <div class="nk-block">
+        <div class="card card-stretch">
+            <div class="card-inner-group">
+                <div class="card-inner p-0">
+                    <table class="nk-tb-list nk-tb-ulist">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head">
+                                
+                                <th class="nk-tb-col">Question</th>
+                                <th class="nk-tb-col">Description</th>
+                                <th class="nk-tb-col">Number of Choices</th>
+                            </tr><!-- .nk-tb-item -->
+                        </thead>
+                        <tbody>
+                            {% for question in question_list %}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col" style="width:40%">{{ question.question_title }}</td>
+                                    <td class="nk-tb-col" style="width:40%">
+                                        {% if question.description %}
+                                        {{ question.description }}
+                                        {% else %}
+                                        {% endif %}
+                                    </td>
+                                    <td class="nk-tb-col" style="width:20%">{{question.choices.count}}</td>
+                                </tr>
+                            {% empty %}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col tb-col-lg">No questions yet</td>
+                                </tr>
+                            {% endfor %}                
+                            </tr><!-- .nk-tb-item -->
+                        </tbody>
+                    </table><!-- .nk-tb-list -->
+                </div>
+                
+            </div>
+        </div><!-- .card -->
+    </div><!-- .nk-block -->
 
 {% endblock %}

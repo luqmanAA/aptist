@@ -1,38 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="card">
-        <div class="card-header">
-            <h3>{{ assessment.name }}</h3>
-        </div>
-        <div class="card-body row justify-content-around">
-            <div class="col-md-4">
-                <h6 class="card-title">Created By: {{ assessment.created_by }}</h6>
-                <h6 class="card-title">Date Created: {{ assessment.date_created }}</h6>
-                <h6 class="card-title">Last Modified: {{ assessment.last_modified }}</h6>
-                <h6 class="card-title">Pass Mark: {{ assessment.pass_mark }}%</h6>
-                <h6 class="card-title">Duration: {{ duration_in_time }} mins</h6>
-                <a href="{% url 'assessments:edit' assessment.id %}">
-                    <button class="btn btn-primary">Edit Assessment</button>
-                </a>
-                <a href="{% url 'assessments:questions:create' assessment.id  %}">
-                    <button class="btn btn-primary">Add Question</button>
-                </a>
+    <div class="nk-block-head ">
+        <div class="card">
+            <div class="card-body mb-4">
+                <div class="mb-4">
+                    <div class="row justify-content-between">
+                        <div class="col-4">
+                            <h3>{{ assessment.name }}</h3>
+                        </div>
+                        <div class="col-2">
+                            <a href="{% url 'assessments:questions:create' assessment.id %}">
+                                <button class="btn btn-primary">Add Question</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class='row justify-content-around'>
+                    <div class="col-md-4">
+                        <div class='mb-4'>
+                            <h6 class="card-title mb-3">Created By: {{ assessment.created_by }}</h6>
+                            <h6 class="card-title mb-3">Date Created: {{ assessment.date_created }}</h6>
+                            <h6 class="card-title mb-3">Last Modified: {{ assessment.last_modified }}</h6>
+                            <h6 class="card-title mb-3">Pass Mark: {{ assessment.pass_mark }}%</h6>
+                            <h6 class="card-title">Duration: {{ duration_in_time }} mins</h6>
+                        </div>
+                        <a href="{% url 'assessments:edit' assessment.id %}">
+                            <button class="btn btn-primary">Edit Assessment</button>
+                        </a>
+                        <a href="{% url 'assessments:questions:list' assessment.id  %}">
+                            <button class="btn btn-primary">All Questions</button>
+                        </a>
+                    </div>
+                    <div class="col-md-4 offset-md-4">
+                        <h6 class="card-title mb-3">Attempted by (Number of Applicants): {{ total_assessment_result }}</h6>
+                        <h6 class="card-title mb-3">Completed by (Number of Applicants): {{ total_complete_assessment_result }}</h6>
+                        <h6 class="card-title mb-3">Uncompleted by (Number of Applicants): {{ total_incomplete_result }}</h6>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4 offset-md-4">
-                <h6 class="card-title">Attempted by (Number of Applicants): {{ total_assessment_result }}</h6>
-                <h6 class="card-title">Completed by (Number of Applicants): {{ total_complete_assessment_result }}</h6>
-                <h6 class="card-title">Uncompleted by (Number of Applicants): {{ total_incomplete_result }}</h6>
-            </div>
-        </div>
 
+        </div>
     </div>
-    <hr>
-    {% comment %} <h2>Questions</h2>
-    {% for question in assessment.questions.all %}
-        <p><a href="{% url 'assessments:questions:detail' assessment.id  question.id %}">{{ question }}</a></p>
-    {% endfor %} {% endcomment %}
-
+{% comment %} 
     <div class="card">
         <div class="card-header">
             <h4>Candidates</h4>
@@ -54,17 +64,72 @@
                     {% for assessment_result in complete_assessment_result%}
                     <tr>
                         <td>{{assessment_result.applicant}}</td>
-                        <td>{{assessment_result.number_of_attempted_questions | date}}</td>
+                        <td>{{assessment_result.number_of_attempted_questions}}</td>
                         <td>{{assessment_result.number_of_correct_answers}}</td>
                         <td>{{assessment_result.number_of_incorrect_answers}}</td>
-                        <td>{{assessment_result.number_of_correct_answers}}/{{assessment.questions.count}}</td>
+                        <td>{{assessment_result.number_of_correct_answers}}</td>
                         <td>{{assessment_result.percentage_score| floatformat:0}}%</td>
-                        <td>{% if assessment_result.score >= assessment.pass_mark %}Pass{%else%}Failed{%endif%}</td>
+                        <td>{% if assessment_result.percentage_score >= assessment.pass_mark %}Passed{%else%}Failed{%endif%}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> {% endcomment %}
+
+    <div class="nk-block">
+        <div class="card card-stretch">
+            <div class="card-inner-group">
+                <div class="card-inner p-0">
+                    <table class="nk-tb-list nk-tb-ulist">
+                        <thead>
+                            <tr class="nk-tb-item nk-tb-head">
+                                
+                                <th class="nk-tb-col">Applicant</th>
+                                <th class="nk-tb-col tb-col-lg">Question Attempted</th>
+                                <th class="nk-tb-col tb-col-lg">Correct Answers</th>
+                                <th class="nk-tb-col tb-col-lg">Incorrect Answers</th>
+                                <th class="nk-tb-col tb-col-xxl">Score</th>
+                                <th class="nk-tb-col tb-col-md">Percentage Score</th>
+                                <th class="nk-tb-col tb-col-mb">Status</th>
+                                
+                            </tr><!-- .nk-tb-item -->
+                        </thead>
+                        <tbody>
+                            {% for assessment_result in complete_assessment_result%}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col">
+                                        <a class="project-title">
+                                            <div class="project-info">
+                                                <h6 class="title">{{assessment_result.applicant}}</h6>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td class="nk-tb-col tb-col-lg">{{assessment_result.number_of_attempted_questions}}</td>
+                                    <td class="nk-tb-col tb-col-lg">{{assessment_result.number_of_correct_answers}}</td>
+                                    <td class="nk-tb-col tb-col-lg">{{assessment_result.number_of_incorrect_answers}}</td>
+                                    <td class="nk-tb-col tb-col-lg">{{assessment_result.number_of_correct_answers}}</td>
+                                    <td class="nk-tb-col tb-col-lg">{{assessment_result.percentage_score| floatformat:0}}%</td>
+                                    <td class="nk-tb-col tb-col-lg">
+                                        {% if assessment_result.percentage_score >= assessment.pass_mark %}
+                                        <span class="badge badge-dim bg-success">Passed</span>
+                                        {%else%}
+                                        Failed
+                                        {%endif%}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr class="nk-tb-item">
+                                    <td class="nk-tb-col tb-col-lg">No result records yet</td>
+                                </tr>
+                            {% endfor %}                
+                            </tr><!-- .nk-tb-item -->
+                        </tbody>
+                    </table><!-- .nk-tb-list -->
+                </div>
+                
+            </div>
+        </div><!-- .card -->
+    </div><!-- .nk-block -->
 
 {%  endblock %}

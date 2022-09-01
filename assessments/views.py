@@ -65,6 +65,12 @@ class EditAssessmentView(LoginRequiredMixin, UpdateView):
         'pass_mark',
         'is_published',
     )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        organization = Organization.objects.get(id=self.request.user.id)
+        context['organization'] = organization
+        return context
 
     def get_success_url(self):
         return reverse('assessments:detail', args=[self.object.id])
@@ -79,7 +85,7 @@ class AssessmentListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         organization = Organization.objects.get(id=self.request.user.id)
-        context['organization_name'] = organization
+        context['organization'] = organization
         context['organization_email'] = organization.email
         return context
 
@@ -90,6 +96,7 @@ class AssessmentDetailView(LoginRequiredMixin, DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        organization = Organization.objects.get(id=self.request.user.id)
         assessment = self.get_object()
         total_assessment_result = Result.objects.filter(assessment=assessment).count()
         complete_assessment_result = Result.objects.filter(assessment=assessment).exclude(percentage_score__isnull=True)
@@ -99,8 +106,9 @@ class AssessmentDetailView(LoginRequiredMixin, DetailView):
         context['total_complete_assessment_result'] = total_complete_assessment_result
         context['complete_assessment_result'] = complete_assessment_result
         context['total_incomplete_result'] = total_assessment_result - total_complete_assessment_result
-        context['organization_name'] = assessment.created_by
+        context['created_by'] = assessment.created_by
         context['organization_email'] = assessment.created_by.email
+        context['organization'] = organization
         return context
         
 

@@ -15,11 +15,15 @@ Including another URLconf
 """
 
 from django.conf import settings
+from django.conf.urls import handler404, handler500
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-from .views import index
+from .views import index, handler404, handler500
+
+handler404 = handler404
+handler500 = handler500
 
 urlpatterns = [
     path('', index, name='index'),

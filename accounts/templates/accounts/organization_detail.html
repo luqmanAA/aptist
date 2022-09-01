@@ -1,9 +1,111 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ organization.company_name }}</h1>
-    <h3>Owned by: {{ organization.first_name }} {{ organization.last_name }}</h3>
-    <h5>Phone: {{ organization.phone_number }}</h5>
-    <h5>Email: {{ organization.email }}</h5>
-    <h5>Company size: {{ organization.company_size | title}}</h5>
+
+    <div class="nk-block">
+        <div class="card">
+            <div class="card-aside-wrap">
+                <div class="card-inner card-inner-lg">
+                    <div class="nk-block-head">
+                        <div class="nk-block-between d-flex justify-content-between">
+                            <div class="nk-block-head-content">
+                                <h4 class="nk-block-title">Personal Information</h4>
+                                <div class="nk-block-des">
+                                    <p>Basic info, like your name and address, that you provided during registration.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-center">
+                                <div class="nk-tab-actions me-n1">
+                                    <a class="btn btn-icon btn-trigger" href="{% url 'accounts:edit-organization' organization.slug %}"><em class="icon ni ni-edit"></em></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- .nk-block-head -->
+                    <div class="nk-block">
+                        <div class="nk-data data-list">
+                            <div class="data-head">
+                                <h6 class="overline-title">Basics</h6>
+                            </div>
+                            <div class="data-item">
+                                <div class="data-col">
+                                    <span class="data-label">Full Name</span>
+                                    <span class="data-value">{{organization.first_name}} {{organization.last_name}}</span>
+                                </div>
+                            </div><!-- data-item -->
+                           
+                            <div class="data-item">
+                                <div class="data-col">
+                                    <span class="data-label">Email</span>
+                                    <span class="data-value">{{organization.email}}</span>
+                                </div>
+                            </div><!-- data-item -->
+                            <div class="data-item">
+                                <div class="data-col">
+                                    <span class="data-label">Phone Number</span>
+                                    <span class="data-value text-soft">
+                                        {%if organization.phone_number%}
+                                        {{organization.phone_number}}
+                                        {%else%}
+                                        Not added yet
+                                        {%endif%}
+                                    </span>
+                                </div>
+                            </div><!-- data-item -->
+        
+                            <div class="data-item" data-tab-target="#address">
+                                <div class="data-col">
+                                    <span class="data-label">Address</span>
+                                    <span class="data-value">2337 Kildeer Drive,<br>Kentucky, Canada</span>
+                                </div>
+                            </div><!-- data-item -->
+                        </div><!-- data-list -->
+                        
+                    </div><!-- .nk-block -->
+                </div>
+                <div class="card-aside card-aside-left user-aside toggle-slide toggle-slide-left toggle-break-lg" data-content="userAside" data-toggle-screen="lg" data-toggle-overlay="true">
+                    <div class="card-inner-group" data-simplebar>
+                        <div class="card-inner">
+                            <div class="user-card">
+                                <div class="user-avatar bg-primary">
+                                    <span>AB</span>
+                                </div>
+                                <div class="user-info">
+                                    <span class="lead-text">{{organization.company_name}}</span>
+                                    <span class="sub-text">{{organization.email}}</span>
+                                </div>
+                                <div class="user-action">
+                                    <div class="dropdown">
+                                        <a class="btn btn-icon btn-trigger me-n2" data-bs-toggle="dropdown" href="#"><em class="icon ni ni-more-v"></em></a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <ul class="link-list-opt no-bdr">
+                                                <li><a href="#"><em class="icon ni ni-camera-fill"></em><span>Change Photo</span></a></li>
+                                                <li><a href="#"><em class="icon ni ni-edit-fill"></em><span>Update Profile</span></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- .user-card -->
+                        </div><!-- .card-inner -->
+                        <div class="card-inner">
+                            <div class="user-account-info py-0">
+                                <h6 class="overline-title-alt">Comoany Name</h6>
+                                <div class="user-balance">{{organization.company_name}} </div>
+                            </div>
+                            <div class="user-account-info py-0">
+                                <h6 class="overline-title-alt">Company Size</h6>
+                                <div class="user-balance">{{organization.company_size | title}} </div>
+                            </div>
+                        </div><!-- .card-inner -->
+                        
+                        <div class="card-inner">
+                            <div class="user-account-info py-0">
+                                <h6 class="overline-title-alt">Last Login</h6>
+                                <p>0{{organization.last_login}}</p>
+                            </div>
+                        </div><!-- .card-inner -->
+                    </div><!-- .card-inner-group -->
+                </div><!-- card-aside -->
+            </div><!-- .card-aside-wrap -->
+        </div><!-- .card -->
+    </div><!-- .nk-block -->
 {%  endblock %}

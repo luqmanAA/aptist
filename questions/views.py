@@ -7,6 +7,7 @@ from django.views import View
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView, FormView
 
+from accounts.models import Organization
 from assessments.models import Assessment
 
 from .forms import CreateQuestionForm, AddChoiceForm, QuestionForm, ChoiceFormset
@@ -18,6 +19,7 @@ from .models import Question, Choice
 @login_required
 def create_question_with_choices(request, assessment_id):
     assessment = Assessment.objects.filter(id=assessment_id).first()
+    
     # check if the request to this view is POST then bound it to the forms
     if request.method == 'POST':
         formdata = request.POST.dict()
@@ -56,6 +58,7 @@ def create_question_with_choices(request, assessment_id):
         {
             'assessment': assessment,
             'question_form': question_form,
+            'organization': assessment.created_by
             # 'choice_formset': choice_formset,
         })
 
@@ -88,8 +91,10 @@ class QuestionListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        organization = Organization.objects.get(id=self.request.user.id)
         context['question'] = self.object_list.first()
         context['assessment_id'] = self.kwargs['assessment_id']
+        context['organization'] = organization
         return context
 
 

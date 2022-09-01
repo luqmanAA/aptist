@@ -22,6 +22,7 @@
     <div class="nk-app-root">
         <!-- main @s -->
         <div class="nk-main ">
+            {% block main %}
             <!-- sidebar @s -->
             <div class="nk-sidebar nk-sidebar-fixed is-light " data-content="sidebarMenu">
                 <div class="nk-sidebar-element nk-sidebar-head">
@@ -89,7 +90,7 @@
                                                 <div class="user-info d-none d-xl-block">
                                                     <div class="user-status user-status-active">Administator</div>
                                                     <div class="user-name dropdown-indicator">
-                                                        {{organization_name}}
+                                                        {{organization}}
                                                     </div>
                                                 </div>
                                             </div>
@@ -102,18 +103,18 @@
                                                     </div>
                                                     <div class="user-info">
                                                         <span class="lead-text">
-                                                            {{organization_name}}
+                                                            {{organization}}
                                                         </span>
                                                         <span class="sub-text">
-                                                            {{organization_email}}
+                                                            {{organization.email}}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="dropdown-inner">
                                                 <ul class="link-list">
-                                                    <li><a href="html/lms/admin-profile.html"><em class="icon ni ni-user-alt"></em><span>View Profile</span></a></li>
-                                                    <li><a href="html/lms/admin-profile-setting.html"><em class="icon ni ni-setting-alt"></em><span>Account Setting</span></a>
+                                                    <li><a href="{% url 'accounts:organization' organization.slug %}"><em class="icon ni ni-user-alt"></em><span>View Profile</span></a></li>
+                                                    <li><a href="{% url 'accounts:edit-organization' organization.slug %}"><em class="icon ni ni-setting-alt"></em><span>Edit Profile</span></a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -192,6 +193,7 @@
                 <!-- footer @e -->
             </div>
             <!-- wrap @e -->
+        {%endblock%}
         </div>
         <!-- main @e -->
     </div>
